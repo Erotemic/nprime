@@ -256,13 +256,27 @@ def sacks(upper=1000, prime_test_function=pyprime):  # pragma: no cover
     primeTest is by default is_prime() and should return a boolean
 
     Returns tho lists:
-        1- The none prime polar coordinates: coord
+        1- All polar coordinates: coord
         2- The prime polar coordinates: prime_coord
 
+    References:
+        .. [WikiUlamVariants] https://en.wikipedia.org/wiki/Ulam_spiral#Variants
+
     Example:
+        >>> from nprime import sacks
         >>> coord, prime_coord = sacks(100)
         >>> assert len(prime_coord) == 25
-        >>> assert len(coord) == 75
+        >>> assert len(coord) == 100
+        >>> # xdoctest: +REQUIRES(module:matplotlib)
+        >>> coord, prime_coord = sacks(1_000)
+        >>> from matplotlib import pyplot as plt
+        >>> fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+        >>> ax.cla()
+        >>> ax.plot(*zip(*coord), '.-')
+        >>> ax.plot(*zip(*prime_coord), '.')
+        >>> ax.set_rmax(coord[-1][1] + 1)
+        >>> ax.grid(True)
+        >>> ax.set_title('Sacks Spiral')
     """
     coord = []  # Normal numbers' polar value
     prime_coord = []  # Prime numbers' polar value
@@ -273,8 +287,7 @@ def sacks(upper=1000, prime_test_function=pyprime):  # pragma: no cover
 
         if prime_test_function(i):
             prime_coord.append((theta, r))
-        else:
-            coord.append((theta, r))
+        coord.append((theta, r))
     return coord, prime_coord
 
 
@@ -288,14 +301,28 @@ def ulam(upper=1000, edge=4, prime_test_function=pyprime):  # pragma: no cover
     primeTest determines the function used to tests the primality of the number
     primeTest is by default is_prime() and should return a boolean
 
-    Returns tho lists:
-        1- The none prime polar coordinates: coord
+    Returns the lists:
+        1- The polar coordinates: coord
         2- The prime polar coordinates: prime_coord
 
+    References:
+        .. [WikiUlam] https://en.wikipedia.org/wiki/Ulam_spiral
+
     Example:
-        >>> coord, prime_coord = sacks(100)
+        >>> from nprime import ulam
+        >>> coord, prime_coord = ulam(100)
         >>> assert len(prime_coord) == 25
-        >>> assert len(coord) == 75
+        >>> assert len(coord) == 99
+        >>> # xdoctest: +REQUIRES(module:matplotlib)
+        >>> coord, prime_coord = ulam(1_000)
+        >>> from matplotlib import pyplot as plt
+        >>> ax = plt.gca()
+        >>> ax.cla()
+        >>> ax.plot(*zip(*coord), '-o')
+        >>> ax.plot(*zip(*prime_coord), 'o')
+        >>> ax.grid(True)
+        >>> ax.set_aspect('equal')
+        >>> ax.set_title('Ulam Spiral')
     """
     theta = 0  # Keep track of the spiral rotation
     psi = math.radians(360 / edge)  # Angle of the polygone's corner
@@ -305,8 +332,8 @@ def ulam(upper=1000, edge=4, prime_test_function=pyprime):  # pragma: no cover
     spiral = 2  # Threshold that indicates when to increase the length of an edge
     spiral_increment = int(edge / 2)  # when the edge length has to go up to spiral
 
-    coord = [(0, 0)]  # Other numbers' coordinates
-    prime_coord = []  # Primes' coordinates
+    coord = [(0, 0)]  # All coordinates
+    prime_coord = []  # Prime coordinates
     x = 0
     y = 0
 
@@ -324,7 +351,6 @@ def ulam(upper=1000, edge=4, prime_test_function=pyprime):  # pragma: no cover
 
         if prime_test_function(i):
             prime_coord.append((x, y))
-        else:
-            coord.append((x, y))
+        coord.append((x, y))
 
     return coord, prime_coord
